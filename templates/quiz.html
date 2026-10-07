@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='navbar-footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='quiz.css') }}">
+</head>
+<body class="quiz-body">
+    {% include 'partials/navbar.html' %}
+
+    <main class="page-shell narrow">
+        <div class="quiz-card">
+            <span class="page-kicker">Assessment</span>
+            <h2 id="title" class="page-title" style="font-size:2rem;margin-top:12px;"></h2>
+            <div id="quiz"></div>
+            <button onclick="submitQuiz()">Submit</button>
+            <div id="result"></div>
+        </div>
+    </main>
+
+    <script>
+        const career = new URLSearchParams(window.location.search).get("career");
+
+        if (!career) {
+            window.location.href = "/form";
+        } else {
+            document.getElementById("title").innerText = career + " Quiz";
+
+            let quizData = [];
+
+            fetch(`/get-quiz/${career}`)
+            .then(res => res.json())
+            .then(data => {
+                quizData = data;
+                loadQuiz();
+            });
+        
+            function loadQuiz() {
+                const container = document.getElementById("quiz");
+
+                quizData.forEach((q, i) => {
+                    let options = `<option value="">Select</option>`;
+                    q.opt.forEach(o => options += `<option>${o}</option>`);
+
+                    container.innerHTML += `
+                    <div class="question">
+                        <p>${i + 1}. ${q.q}</p>
+                        <select id="q${i}">${options}</select>
+                    </div>`;
+                });
+            }
+
+            function submitQuiz() {
+                let score = 0;
+                let analysis = [];
+                const userId = localStorage.getItem("userId");
+
+                if (!userId) {
+                    alert("Please log in again to save your quiz result.");
+                    window.location.href = "/login";
+                    return;
+                }
+
+                quizData.forEach((q, i) => {
+                    const userAns = document.getElementById(`q${i}`).value;
+
+                    if (userAns === q.ans) {
+                        score++;
+                    }
+
+                    analysis.push({
+                        question: q.q,
+                        correct: q.ans,
+                        user: userAns
+                    });
+                });
+
+                const total = quizData.length;
+                localStorage.setItem(`quizScore_${userId}`, score);
+                localStorage.setItem(`totalQuestions_${userId}`, total);
+                
+                localStorage.setItem(
+                    `quizAnalysis_${userId}_${career}`,
+                     JSON.stringify(analysis)
+                     );
+
+                const result = {
+                    career: career,
+                    score: score,
+                    total: total,
+                    date: new Date().toLocaleString()
+                };
+
+                const historyKey = `history_${userId}`;
+                const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+                history.push(result);
+                localStorage.setItem(historyKey, JSON.stringify(history));
+
+                 //window.location.href = "/result";
+                //  window.location.href="/result?new_attempt=1";
+
+                fetch("/save-quiz-attempt", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        career: career,
+                        score: score,
+                        total: total,
+                        analysis: analysis
+                    })
+                })
+                .then(async response => {
+                    const data = await response.json();
+                
+                    if (!response.ok) {
+                        throw new Error(data.error || "Could not save quiz attempt");
+                    }
+
+                     window.location.href = "/result?new_attempt=1";
+                 })
+                 .catch(error => {
+                     console.error("Quiz saving error:", error);
+                 
+                     alert(
+                         "Your quiz result could not be saved to the database. " +
+                         "Please try again."
+                     );
+                 });
+                             }
+                 
+            window.submitQuiz = submitQuiz;
+        }
+            
+    </script>
+
+{% include 'partials/footer.html' %}
+
+</body>
+</html>

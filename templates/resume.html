@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Professional Resume Builder | Perfect PDF Export</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='resume.css') }}">
+</head>
+<body>
+  <a href="{{ url_for('dashboard') }}" class="back-btn" title="Back to dashboard Page">
+  ← 
+  </a>
+<div class="container">
+  <div class="form-panel">
+    <h2>Resume Builder</h2>
+
+    <div class="card">
+      <h3>Profile Photo (right side)</h3>
+      <input type="file" id="photoUpload" accept="image/*">
+      <small style="color:#6c757d;">Image will appear on right side of header</small>
+    </div>
+
+    <div class="card">
+      <h3>Personal Info</h3>
+      <input type="text" id="name" placeholder="Full Name">
+      <input type="text" id="jobtitle" placeholder="Job Title / Role" >
+      <input type="text" id="phone" placeholder="Phone">
+      <input type="text" id="email" placeholder="Email" >
+      <input type="text" id="address" placeholder="Address" >
+      <input type="text" id="linkedin" placeholder="LinkedIn / GitHub" >
+    </div>
+
+    <div class="card">
+      <h3>Professional Summary</h3>
+      <textarea id="summary">Detail-oriented Computer Science Engineering student at Government College of Engineering, Keonjhar with strong organizational and analytical skills. Skilled in MS Excel, documentation, and coordination tasks. Quick learner with technical expertise in Git, GitHub, ReactJS and NodeJS. Seeking an Operations Executive role to contribute to operational efficiency and process improvement.</textarea>
+    </div>
+
+    <div class="card">
+      <h3>Education</h3>
+      <div id="edu-list"></div>
+      <button onclick="addEducation()">+ Add Education</button>
+    </div>
+
+    <div class="card">
+      <h3>Experience / Internship</h3>
+      <div id="exp-list"></div>
+      <button onclick="addExperience()">+ Add Experience</button>
+    </div>
+
+    <div class="card">
+      <h3>Certifications</h3>
+      <div id="cert-list"></div>
+      <button onclick="addCertification()">+ Add Certification</button>
+    </div>
+
+    <div class="card">
+      <h3>Projects</h3>
+      <div id="project-list"></div>
+      <button onclick="addProject()">+ Add Project</button>
+    </div>
+
+    <div class="card">
+      <h3>Extra-Curricular Activities</h3>
+      <div id="extra-list"></div>
+      <button onclick="addExtraCurricular()">+ Add Activity</button>
+    </div>
+
+    <div class="card">
+      <h3>Technical Skills</h3>
+      <div id="skills-list"></div>
+      <button onclick="addSkill()">+ Add Skill</button>
+    </div>
+
+    <div class="card">
+      <h3>Awards & Achievements</h3>
+      <div id="awards-list"></div>
+      <button onclick="addAward()">+ Add Award</button>
+    </div>
+  </div>
+
+  <div class="preview-panel">
+    <div id="resume-content"></div>
+    <button class="download-btn" onclick="downloadPerfectPDF()">Download Full Resume (A4)</button>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='resume1.js') }}"></script>
+</body>
+</html>

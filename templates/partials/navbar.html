@@ -1,0 +1,20 @@
+<nav class="site-nav">
+    <div class="logo-area">
+        <div class="logo">Career Mitra</div>
+        <div class="sub-logo">Online Career Recommendation</div>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a></li>
+        {% if session.get('user_id') %}
+            <li><a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+            <li><a href="{{ url_for('form') }}" class="{% if request.endpoint == 'form' %}active{% endif %}">Career Test</a></li>
+            <li><a href="{{ url_for('result') }}" class="{% if request.endpoint == 'result' %}active{% endif %}">Result</a></li>
+            <li><a href="{{ url_for('career_path') }}" class="{% if request.endpoint == 'career_path' %}active{% endif %}">Career Path</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        {% else %}
+            <li><a href="{{ url_for('login') }}" class="{% if request.endpoint == 'login' %}active{% endif %}">Login</a></li>
+            <li><a href="{{ url_for('register') }}" class="{% if request.endpoint == 'register' %}active{% endif %}">Register</a></li>
+        {% endif %}
+    </ul>
+</nav>

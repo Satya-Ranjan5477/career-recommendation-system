@@ -1,0 +1,144 @@
+/* Navbar Styles */
+nav.site-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 8%;
+    background: rgba(15, 23, 42, 0.34);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.logo-area {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(45deg, #7dd3fc, #c084fc, #f472b6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.sub-logo {
+    font-size: 12px;
+    color: rgba(229, 238, 252, 0.72);
+    letter-spacing: 1px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    transition: 0.3s ease;
+    font-size: 15px;
+}
+
+.nav-links li a:hover {
+    color: #7de2f4;
+    text-shadow: 0 0 12px rgba(125, 226, 244, 0.3);
+}
+.nav-links a.active {
+    background: linear-gradient(135deg, #5b5df6, #7c3aed);
+    color: #fff;
+    border-radius: 20px;
+}
+
+/* Footer Styles */
+footer.site-footer {
+    background: rgba(15, 23, 42, 0.54);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(18px);
+    padding: 48px 8%;
+    margin-top: auto;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto 32px;
+}
+
+.footer-section h4 {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 700;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+}
+
+.footer-section p {
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: rgba(255, 255, 255, 0.78);
+    text-decoration: none;
+    transition: 0.3s ease;
+    font-weight: 500;
+}
+
+.footer-section ul li a:hover {
+    color: #7de2f4;
+    padding-left: 4px;
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 24px;
+}
+
+.footer-bottom p {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    nav.site-nav {
+        flex-direction: column;
+        gap: 14px;
+        text-align: center;
+        padding: 12px 5%;
+    }
+
+    .nav-links {
+        justify-content: center;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        text-align: center;
+    }
+
+    .footer-section ul li a:hover {
+        padding-left: 0;
+    }
+}

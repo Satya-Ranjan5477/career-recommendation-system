@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result - Career Mitra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='navbar-footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
+</head>
+<body class="result-body">
+    {% include 'partials/navbar.html' %}
+
+    {% set gap = skill_gap or {
+        'career': career or '',
+        'matched_skills': [],
+        'missing_skills': [],
+        'readiness_percentage': 0,
+        'is_known_career': false
+    } %}
+
+    <main class="result-page">
+        <div class="result-container">
+            <section class="result-shell">
+            <section class="result-hero">
+                <div class="result-copy">
+                    <h2 class="result-label">Recommended Career</h2>
+                    <h1 class="career-title">{{ career or 'Career not found' }}</h1>
+                    <p class="result-description">You are {{ gap.readiness_percentage or 0 }}% ready for {{ career or 'this career path' }}. Focus on <strong>{{ gap.missing_skills[0] if gap.missing_skills else 'building real-world projects' }}</strong> to improve fastest.</p>
+                      <div id="quizStatusBox" class="quiz-summary">
+
+                              <div id="noAttempt">
+                                  <p>📝 Take quiz to show result.</p>
+                              </div>
+
+                              <div id="previousAttempt" hidden>
+                                  <p>
+                                      last Attempt:
+                                      <strong id="previousScore"></strong>
+                                  </p>
+                              </div>
+
+                              <div id="currentAttempt">
+                                  <p id="currentPlaceholder">
+                                      Current Attempt: Take quiz to show status.
+                                     </p>
+
+                                  <p id="currentRealScore" hidden>
+                                      Current Attempt:
+                                      <strong id="currentScore"></strong>
+                                  </p>
+                              </div>
+                        </div>
+
+                        <button onclick="startQuiz()"
+                             class="result-cta__button result-hero__button">
+                             Start Career Quiz
+                           </button>
+
+                </div>
+
+                <div class="result-hero__indicator">
+                    <div class="gauge-container">
+                        <div class="gauge-wrapper">
+                            <div class="readiness-gauge" data-readiness="{{ gap.readiness_percentage or 0 }}" aria-label="Skill readiness gauge">
+                                <div class="readiness-gauge__dial">
+                                    <svg class="readiness-gauge__svg" viewBox="0 0 240 150" role="img" aria-hidden="true">
+                                        <defs>
+                                            <filter id="gaugeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                                <feGaussianBlur stdDeviation="2.5" result="blur"></feGaussianBlur>
+                                                <feMerge>
+                                                    <feMergeNode in="blur"></feMergeNode>
+                                                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                                                </feMerge>
+                                            </filter>
+                                            <linearGradient id="gaugeGradient" x1="30" y1="110" x2="210" y2="110" gradientUnits="userSpaceOnUse">
+                                                <stop offset="0%" stop-color="#ff4d4d"></stop>
+                                                <stop offset="50%" stop-color="#facc15"></stop>
+                                                <stop offset="100%" stop-color="#22c55e"></stop>
+                                            </linearGradient>
+                                        </defs>
+
+                                        <path class="readiness-gauge__track" d="M 30 110 A 90 90 0 0 1 210 110"></path>
+                                        <path class="readiness-gauge__arc" d="M 30 110 A 90 90 0 0 1 210 110"></path>
+                                    </svg>
+
+                                    <div class="readiness-gauge__needle" aria-hidden="true"></div>
+                                    <div class="readiness-gauge__center-dot" aria-hidden="true"></div>
+
+                                    <div class="readiness-gauge__value-wrap">
+                                        <span class="readiness-gauge__value">0%</span>
+                                    </div>
+                                </div>
+
+                                <div class="readiness-gauge__content">
+                                    <span class="readiness-gauge__label">Skill Readiness</span>
+                                    <p class="readiness-gauge__detail">
+                                        Based on {{ gap.matched_skills|length }} out of {{ total_skills }} required skills
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="skill-gap-grid">
+                <article class="skill-card skill-card--accent">
+                    <h3 class="skill-card__title">Readiness Summary</h3>
+                    {% if gap.is_known_career %}
+                        <p class="skill-card__text">You already match <strong>{{ gap.matched_skills|length }}</strong> core skills for <strong>{{ gap.career }}</strong>.</p>
+                        <p class="skill-card__text">Focus on the remaining <strong>{{ gap.missing_skills|length }}</strong> skills to improve readiness.</p>
+                    {% else %}
+                        <p class="skill-card__text">We predicted a career, but we do not have a skill benchmark for it yet.</p>
+                    {% endif %}
+                </article>
+
+                <article class="skill-card">
+                    <h3 class="skill-card__title">Matched Skills</h3>
+                    {% if gap.matched_skills %}
+                        <ul class="skill-list skill-list--matched">
+                            {% for skill in gap.matched_skills %}
+                                <li>{{ skill }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="skill-card__empty">No matched skills yet.</p>
+                    {% endif %}
+                </article>
+
+                <article class="skill-card">
+                    <h3 class="skill-card__title">Missing Skills</h3>
+                    {% if gap.missing_skills %}
+                        {% set priority_skills = gap.missing_skills[:3] %}
+                        {% set secondary_skills = gap.missing_skills[3:] %}
+
+                        <div class="skill-group">
+                            <p class="skill-group__label">Priority Skills</p>
+                            <ul class="skill-list skill-list--missing">
+                                {% for skill in priority_skills %}
+                                    <li>{{ skill }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        {% if secondary_skills %}
+                            <div class="skill-group">
+                                <p class="skill-group__label">Secondary Skills</p>
+                                <ul class="skill-list skill-list--secondary">
+                                    {% for skill in secondary_skills %}
+                                        <li>{{ skill }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p class="skill-card__empty">You currently cover all tracked skills for this role.</p>
+                    {% endif %}
+                </article>
+            </div>
+
+            <div class="insight-grid">
+                <article class="skill-card personality-fit-card">
+                    <h3 class="skill-card__title">Personality Fit</h3>
+                    {% if traits %}
+                        <p class="skill-card__text">
+                            {% if "problem solving" in traits %}
+                                Your problem-solving mindset suggests you can handle debugging, resolve practical issues, and work through real-world technical challenges with confidence.
+                            {% endif %}
+                            {% if "logical thinking" in traits %}
+                                Your logical thinking also supports backend work, system design, and building structured technical solutions.
+                            {% endif %}
+                            {% if "creativity" in traits %}
+                                Your creativity adds strength in frontend, UI, and experience-focused roles where thoughtful design matters.
+                            {% endif %}
+                            {% if "problem solving" not in traits and "logical thinking" not in traits and "creativity" not in traits %}
+                                Your selected traits show personal strengths that can support growth in this career path as you build more experience.
+                            {% endif %}
+                        </p>
+                    {% else %}
+                        <p class="skill-card__text">No personality traits were selected for this recommendation.</p>
+                    {% endif %}
+                </article>
+
+                <article class="skill-card why-career-card">
+                    <h3 class="skill-card__title">Why {{ career }}?</h3>
+                    <ul class="why-career-list">
+                        {% if gap.matched_skills %}
+                            <li>You already show relevant strengths in {{ gap.matched_skills[:3] | join(', ') }}{% if gap.matched_skills|length > 3 %} and more{% endif %}.</li>
+                        {% else %}
+                            <li>This recommendation reflects your overall profile even if matched core skills are still growing.</li>
+                        {% endif %}
+
+                        {% if "analytical" in traits %}
+                            <li>Your analytical thinking supports structured problem solving and technical decision-making.</li>
+                        {% endif %}
+                        {% if "creativity" in traits %}
+                            <li>Your creativity adds value in building intuitive products, interfaces, and fresh solutions.</li>
+                        {% endif %}
+                        {% if "curiosity" in traits %}
+                            <li>Your curiosity suggests strong potential for continuous learning and adapting to new tools.</li>
+                        {% endif %}
+                        {% if "problem solving" in traits %}
+                            <li>Your problem-solving mindset aligns well with real-world development and debugging work.</li>
+                        {% endif %}
+
+                        {% if interests %}
+                            <li>Your interests in {{ interests[:3] | join(', ') }}{% if interests|length > 3 %} and related areas{% endif %} align with this career path.</li>
+                        {% else %}
+                            <li>Your recommendation is also based on your qualification and selected strengths.</li>
+                        {% endif %}
+                    </ul>
+                </article>
+            </div>
+
+            <article class="skill-card roadmap-card">
+                <h3 class="skill-card__title">Next Step Roadmap</h3>
+                {% set skill_topics = {
+                    'javascript': 'Learn JavaScript (DOM, events, functions, async basics)',
+                    'html': 'Learn HTML (semantic tags, forms, accessibility basics)',
+                    'css': 'Learn CSS (layouts, flexbox, grid, responsive design)',
+                    'bootstrap': 'Learn Bootstrap (grid system, components, responsive utilities)',
+                    'react': 'Learn React (components, props, state, hooks)',
+                    'nodejs': 'Learn Node.js (modules, APIs, async programming, Express basics)',
+                    'express': 'Learn Express (routing, middleware, REST API patterns)',
+                    'mongodb': 'Learn MongoDB (documents, CRUD, schema design basics)',
+                    'mysql': 'Learn MySQL (queries, joins, normalization, indexing basics)',
+                    'sql': 'Learn SQL (queries, joins, filtering, aggregation)',
+                    'python': 'Learn Python (functions, OOP, file handling, problem solving)',
+                    'pandas': 'Learn Pandas (dataframes, cleaning, filtering, transformations)',
+                    'ml': 'Learn Machine Learning (supervised learning, model evaluation, feature basics)',
+                    'tensorflow': 'Learn TensorFlow (tensors, model building, training workflows)',
+                    'keras': 'Learn Keras (sequential models, layers, training, callbacks)',
+                    'deep learning': 'Learn Deep Learning (neural networks, backpropagation, practical modeling)',
+                    'nlp': 'Learn NLP (text preprocessing, embeddings, classification basics)',
+                    'opencv': 'Learn OpenCV (image processing, detection, computer vision basics)',
+                    'excel': 'Learn Excel (formulas, pivot tables, charts, data cleaning)',
+                    'tableau': 'Learn Tableau (dashboards, visual storytelling, filters, charts)',
+                    'power bi': 'Learn Power BI (reports, dashboards, DAX basics, data modeling)',
+                    'aws': 'Learn AWS (core services, deployment basics, cloud architecture)',
+                    'docker': 'Learn Docker (images, containers, Dockerfiles, local deployment)',
+                    'kubernetes': 'Learn Kubernetes (pods, deployments, scaling, cluster basics)',
+                    'linux': 'Learn Linux (CLI, permissions, processes, shell commands)',
+                    'networking': 'Learn Networking (TCP/IP, routing, protocols, troubleshooting)',
+                    'ethical hacking': 'Learn Ethical Hacking (recon, vulnerabilities, security basics)',
+                    'network security': 'Learn Network Security (firewalls, threats, secure configurations)',
+                    'figma': 'Learn Figma (wireframes, components, prototyping, design systems)',
+                    'prototyping': 'Learn Prototyping (user flows, validation, interactive mockups)',
+                    'flutter': 'Learn Flutter (widgets, layouts, state management basics)',
+                    'react native': 'Learn React Native (components, navigation, mobile UI patterns)'
+                } %}
+                {% if gap.missing_skills %}
+                    <ol class="roadmap-list">
+                        {% for skill in gap.missing_skills %}
+                            <li>{{ skill_topics.get(skill, 'Learn ' ~ skill ~ ' through concepts, guided practice, and hands-on exercises') }}</li>
+                            {% if loop.index % 2 == 0 %}
+                                <li>Build a mini project that combines {{ gap.missing_skills[loop.index - 2] }} and {{ skill }} in a practical workflow.</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <p class="skill-card__text">You already cover the tracked skills for this role. Build projects, document your work, and strengthen your portfolio next.</p>
+                {% endif %}
+            </article>
+
+
+            <div class="result-actions">
+                <a href="{{ url_for('career_path') }}" class="primary-action">
+                     Start Learning Path
+                </a>
+                <button type="button" id="analysisBtn" class="secondary-action" onclick="showAnalysis()" hidden>Result Analysis</button>
+                <a href="{{ url_for('form') }}" class="secondary-action">Try another path</a>
+                <a href="{{ url_for('dashboard') }}" class="secondary-action">Go to Dashboard</a>
+            </div>
+
+            <div id="analysisBox" class="analysis-box" hidden></div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // const career = {{ career|tojson }};
+        // const skillGap = {{ gap|tojson }};
+        // const userId = localStorage.getItem("userId");
+        // const params = new URLSearchParams(window.location.search);
+        // const newAttempt = params.get("new_attempt"); 
+        //   //if(!newAttempt){
+        //      //   analysisBtn.hidden = true;
+        //      //}
+        // const noAttempt = document.getElementById("noAttempt");
+        // const previousAttempt = document.getElementById("previousAttempt");
+
+        // const currentPlaceholder = document.getElementById("currentPlaceholder");
+        // const currentRealScore = document.getElementById("currentRealScore");
+
+        // const previousScore = document.getElementById("previousScore");
+        // const currentScore = document.getElementById("currentScore");
+
+        // const analysisBtn = document.getElementById("analysisBtn");
+        // const analysisBox = document.getElementById("analysisBox");
+        // const score = userId ? localStorage.getItem(`quizScore_${userId}`) : null;
+        // const total = userId ? localStorage.getItem(`totalQuestions_${userId}`) : null;
+       
+        // const analysisKey = `quizAnalysis_${userId}_${career}`;
+        // const analysis = userId
+        //    ? JSON.parse(localStorage.getItem(analysisKey) || "[]")
+        //    : [];
+        // const historyKey = `history_${userId}`;
+        // const history = JSON.parse(        
+        // localStorage.getItem(historyKey) || "[]"
+        //  );
+        
+        // const careerHistory = history.filter(        
+        //  item => item.career === career
+        //  );
+
+        // noAttempt.hidden = true;
+        // previousAttempt.hidden = true;
+
+        // currentPlaceholder.hidden = true;
+        // currentRealScore.hidden = true;
+
+        // analysisBtn.hidden = true;
+
+        // if(careerHistory.length===0){
+
+        //    noAttempt.hidden=false;
+        //    currentPlaceholder.hidden=false;
+        // }
+
+
+        // else if(careerHistory.length>=1 && !newAttempt){
+
+        //    previousAttempt.hidden=false;
+        //    currentPlaceholder.hidden=false;
+
+        //    let last =
+        //       careerHistory[careerHistory.length-1];
+
+        //    previousScore.textContent=
+        //       `${last.score}/${last.total}`;
+
+            
+        // }
+
+        // else if(careerHistory.length>=2 && newAttempt){
+
+        //    previousAttempt.hidden=false;
+
+        //    let previous=
+        //       careerHistory[careerHistory.length-2];
+
+        //    let current=
+        //       careerHistory[careerHistory.length-1];
+
+        //    previousScore.textContent=
+        //       `${previous.score}/${previous.total}`;
+
+        //    currentScore.textContent=
+        //       `${current.score}/${current.total}`;
+
+        //    currentRealScore.hidden=false;
+
+        //    if(analysis.length){
+        //       analysisBtn.hidden=false;
+        //     }
+        // }
+
+
+
+        // else if(careerHistory.length===1 && newAttempt){
+
+        //    currentScore.textContent=
+        //       `${careerHistory[0].score}/${careerHistory[0].total}`;
+
+        //    currentRealScore.hidden=false;
+
+        //    if(analysis.length){
+        //       analysisBtn.hidden=false;
+        //    }
+        // }
+const career = {{ career|tojson }};
+const skillGap = {{ skill_gap|tojson }};
+
+const latestQuizAttempt =
+    {{ latest_quiz_attempt|default(none)|tojson }};
+
+const previousQuizAttempt =
+    {{ previous_quiz_attempt|default(none)|tojson }};
+
+const newAttempt =
+    new URLSearchParams(window.location.search)
+        .get("new_attempt");
+
+
+const noAttempt =
+    document.getElementById("noAttempt");
+
+const previousAttempt =
+    document.getElementById("previousAttempt");
+
+const currentPlaceholder =
+    document.getElementById("currentPlaceholder");
+
+const currentRealScore =
+    document.getElementById("currentRealScore");
+
+const previousScore =
+    document.getElementById("previousScore");
+
+const currentScore =
+    document.getElementById("currentScore");
+
+const analysisBtn =
+    document.getElementById("analysisBtn");
+
+const analysisBox =
+    document.getElementById("analysisBox");
+
+
+// ------------------------------------
+// INITIAL STATE
+// ------------------------------------
+
+noAttempt.hidden = true;
+previousAttempt.hidden = true;
+
+currentPlaceholder.hidden = true;
+currentRealScore.hidden = true;
+
+analysisBtn.hidden = true;
+
+
+// ------------------------------------
+// NO QUIZ ATTEMPT
+// ------------------------------------
+
+if (!latestQuizAttempt) {
+
+    noAttempt.hidden = false;
+
+    currentPlaceholder.hidden = false;
+
+}
+
+
+// ------------------------------------
+// QUIZ ATTEMPT EXISTS
+// ------------------------------------
+
+else {
+
+    // Latest/current attempt
+    currentScore.textContent =
+        `${latestQuizAttempt.score}/${latestQuizAttempt.total_questions}`;
+
+    currentRealScore.hidden = false;
+
+
+    // Previous attempt exists
+    if (previousQuizAttempt) {
+
+        previousScore.textContent =
+            `${previousQuizAttempt.score}/${previousQuizAttempt.total_questions}`;
+
+        previousAttempt.hidden = false;
+
+    }
+
+
+    // Show analysis button
+    if (
+        latestQuizAttempt.analysis &&
+        latestQuizAttempt.analysis.length > 0
+    ) {
+
+        analysisBtn.hidden = false;
+
+    }
+
+}
+
+
+        function startQuiz() {
+            if (!career) {
+                window.location.href = "{{ url_for('form') }}";
+                return;
+            }
+
+            window.location.href = `/quiz?career=${encodeURIComponent(career)}`;
+        }
+
+        // function showAnalysis() {
+        //     if (!analysis.length) {
+        //         analysisBox.hidden = false;
+        //         analysisBox.innerHTML = "<p>No quiz analysis available yet.</p>";
+        //         return;
+        //     }
+
+        //     let html = "";
+
+        //     analysis.forEach((item, index) => {
+        //         const isCorrect = item.user === item.correct;
+        //         html += `
+        //             <div class="analysis-item">
+        //                 <p><strong>Q${index + 1}:</strong> ${item.question}</p>
+        //                 <p>Your Answer: ${item.user || "Not answered"} ${isCorrect ? "&#10004;" : "&#10006;"}</p>
+        //                 ${isCorrect ? "" : `<p>Correct Answer: ${item.correct}</p>`}
+        //             </div>
+        //         `;
+        //     });
+
+        //     analysisBox.innerHTML = html;
+        //     analysisBox.hidden = false;
+        //     analysisBtn.hidden = true;
+        // }
+        function showAnalysis() {
+
+    const analysis =
+        latestQuizAttempt?.analysis || [];
+
+
+    if (!analysis.length) {
+
+        analysisBox.hidden = false;
+
+        analysisBox.textContent =
+            "No quiz analysis available yet.";
+
+        return;
+    }
+
+
+    analysisBox.innerHTML = "";
+
+
+    analysis.forEach((item, index) => {
+
+        const analysisItem =
+            document.createElement("div");
+
+        analysisItem.className =
+            "analysis-item";
+
+
+        // Question
+        const question =
+            document.createElement("p");
+
+        const questionStrong =
+            document.createElement("strong");
+
+        questionStrong.textContent =
+            `Q${index + 1}: `;
+
+        question.appendChild(
+            questionStrong
+        );
+
+        question.appendChild(
+            document.createTextNode(
+                item.question || ""
+            )
+        );
+
+
+        // User answer
+        const answer =
+            document.createElement("p");
+
+        const isCorrect =
+            item.user === item.correct;
+
+        answer.textContent =
+            `Your Answer: ${
+                item.user || "Not answered"
+            } ${
+                isCorrect ? "✔" : "✖"
+            }`;
+
+        analysisItem.appendChild(question);
+        analysisItem.appendChild(answer);
+
+
+        // Correct answer
+        if (!isCorrect) {
+
+            const correctAnswer =
+                document.createElement("p");
+
+            correctAnswer.textContent =
+                `Correct Answer: ${
+                    item.correct || ""
+                }`;
+
+            analysisItem.appendChild(
+                correctAnswer
+            );
+        }
+
+
+        analysisBox.appendChild(
+            analysisItem
+        );
+
+    });
+
+
+    analysisBox.hidden = false;
+
+    analysisBtn.hidden = true;
+}
+        (() => {
+            const gauges = document.querySelectorAll(".readiness-gauge");
+            const easeOutCubic = (value) => 1 - Math.pow(1 - value, 3);
+            const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+            gauges.forEach((gauge) => {
+                const target = clamp(Number(gauge.dataset.readiness || skillGap.readiness_percentage || 0), 0, 100);
+                const needle = gauge.querySelector(".readiness-gauge__needle");
+                const valueText = gauge.querySelector(".readiness-gauge__value");
+                const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+                if (target >= 70) {
+                    gauge.classList.add("is-high");
+                }
+
+                const render = (value) => {
+                    const rotation = -90 + (value / 100) * 180;
+                    needle.style.transform = `translate(-50%, -100%) rotate(${rotation}deg)`;
+                    valueText.textContent = `${Math.round(value)}%`;
+                };
+
+                if (reduceMotion) {
+                    render(target);
+                    return;
+                }
+
+                const duration = 1400;
+                const start = performance.now();
+
+                const animate = (timestamp) => {
+                    const elapsed = timestamp - start;
+                    const progress = clamp(elapsed / duration, 0, 1);
+                    render(target * easeOutCubic(progress));
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        render(target);
+                    }
+                };
+
+                requestAnimationFrame(animate);
+            });
+        })();
+    </script>
+
+    {% include 'partials/footer.html' %}
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard - Career Mitra</title>
+<link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='navbar-footer.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='dashboard.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="dashboard-body">
+
+{% include 'partials/navbar.html' %}
+
+<div class="dashboard">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        <div class="profile">
+            <img
+                id="profileImage"
+                class="profile-image"
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%235b5df6'/><stop offset='100%' stop-color='%238b5cf6'/></linearGradient></defs><rect width='120' height='120' rx='60' fill='url(%23g)'/><circle cx='60' cy='47' r='22' fill='rgba(255,255,255,0.88)'/><path d='M24 102c7-20 21-30 36-30s29 10 36 30' fill='rgba(255,255,255,0.88)'/></svg>'
+                alt="Profile photo">
+            
+            <h3 id="userName">Loading...</h3>
+            <p id="userId"></p>
+
+            <!-- <input type="file" id="uploadPhoto"> -->
+             <input
+                type="file"
+                id="uploadPhoto"
+                accept="image/*"
+                hidden
+            >
+            
+            <label
+                for="uploadPhoto"
+                class="photo-btn"
+                id="photoButton"
+            >
+                📷 Add Photo
+            </label>
+        </div>
+
+        <div class="menu">
+            <button type="button" onclick="window.location.href='/dashboard'">🏠 Dashboard</button>
+            <button type="button" onclick="window.location.href='/form'">🎯 Career Test</button>
+            <button type="button" onclick="window.location.href='/result'">📊 My Result</button>
+            <button type="button" onclick="openCareerPath()">📚 Learning Path</button>
+            <button type="button" onclick="window.location.href='/resume'"> 📄Resume Builder</button>
+            <button type="button" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+
+    <!-- RIGHT CONTENT -->
+    <div class="main-content">
+
+       <h2 class="header-title">Welcome to Career Mitra 👋</h2>
+
+        <div class="start-box">
+            <h3>Discover Your Best Career Path</h3>
+            <a href="{{ url_for('form') }}">
+                <button class="start-btn">Explore Your Career</button>
+
+            </a>
+        </div>
+     <div class="kpi-container">
+        <div class="kpi-card">
+            <h4>Total Attempts</h4>
+            <p id="totalAttempts">0</p>
+        </div>
+
+        <div class="kpi-card">
+            <h4>Average Score</h4>
+            <p id="avgScore">0</p>
+        </div>
+
+        <div class="kpi-card">
+            <h4>Best Score</h4>
+            <p id="bestScore">0</p>
+        </div>
+    </div>
+
+     <!-- MAIN GRID -->
+    <div class="grid-container">
+
+        <!-- LEFT SIDE -->
+        <div class="left-panel">
+
+            <div class="card1">
+                <h3>🎯 Latest Result</h3>
+                <p id="latestCareer">No result yet</p>
+                <p id="latestScore"></p>
+            </div>
+
+            <div class="card1 performance-card">
+                <h3>📈 Performance Chart</h3>
+               
+                  <div class="performance-chart-scroll">
+                      <div class="performance-chart-inner">
+                          <canvas id="barChart"></canvas>
+                      </div>
+                 </div>
+               
+            </div>
+        </div>
+        
+
+        <!-- RIGHT SIDE -->
+        <div class="right-panel">
+
+            <div class="card1">
+                <h3>📊 Result Timeline</h3>
+                <div id="history"></div>
+            </div>
+
+            <div class="card1 score-distribution-card">
+                <h3>🥧 Score Distribution</h3>
+                <div class="pie-wrapper">
+                 <canvas id="pieChart"></canvas>
+                </div>
+                <div id="insightText"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+        
+    </div>
+
+</div>
+
+<script>
+window.firebaseConfig = {
+ apiKey: "{{ firebase_config.apiKey }}",
+ authDomain: "{{ firebase_config.authDomain }}",
+ projectId: "{{ firebase_config.projectId }}",
+ storageBucket: "{{ firebase_config.storageBucket }}",
+ messagingSenderId: "{{ firebase_config.messagingSenderId }}",
+ appId: "{{ firebase_config.appId }}"
+};
+
+
+</script>
+
+<script type="module" src="{{ url_for('static',filename='script.js') }}"></script>
+
+{% include 'partials/footer.html' %}
+
+</body>
+</html>

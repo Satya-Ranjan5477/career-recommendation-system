@@ -1,0 +1,179 @@
+/* Career Form Page Styles */
+body.auth-body.career-form-body {
+    background:
+        radial-gradient(circle at top left, rgba(91, 93, 246, 0.36), transparent 35%),
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.20), transparent 28%),
+        linear-gradient(135deg, #0f172a 0%, #172554 48%, #312e81 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.career-form-shell {
+    padding-top: 28px;
+    padding-bottom: 56px;
+}
+
+.career-form-card {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    background: rgba(15, 23, 42, 0.54);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 24px;
+    padding: 32px 36px;
+    box-shadow: 0 20px 48px rgba(2, 6, 23, 0.3);
+    color: #fff;
+}
+
+.career-form-card label {
+    font-weight: 600;
+    margin-top: 20px;
+    display: block;
+    color: rgba(255,255,255,0.85);
+    font-size: 1.05rem;
+}
+
+.career-form-card select {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.16);
+    transition: 0.3s ease;
+    background: rgba(255,255,255,0.96);
+    color: #111827;
+    font-weight: 500;
+}
+
+.career-form-card select:focus {
+    outline: none;
+    border-color: rgba(91, 93, 246, 0.5);
+    box-shadow: 0 0 12px rgba(91, 93, 246, 0.2);
+}
+
+.career-form-card button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    margin-top: 28px;
+    background: linear-gradient(135deg, #5b5df6, #8b5cf6);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.career-form-card button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(91, 93, 246, 0.3);
+}
+
+.career-form-card h2 {
+    margin-bottom: 12px;
+    color: rgba(255,255,255,0.95);
+}
+
+.career-form-card .form-note {
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* Select2 Styling */
+.select2-container--default .select2-selection--multiple {
+    border-radius: 12px !important;
+    border: 1px solid rgba(255,255,255,0.16) !important;
+    padding: 10px !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    min-height: 44px;
+    box-shadow: none !important;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    background: none !important;
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.select2-container--default.select2-container--multiple .select2-search--inline {
+    margin: 0 !important;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 12px rgba(91, 93, 246, 0.2) !important;
+    background-color: #ffffff !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #7de2f4 !important;
+    color: #0f172a !important;
+    border: 1px solid rgba(125, 226, 244, 0.5) !important;
+    padding: 8px 12px !important;
+    border-radius: 8px !important;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #0f172a !important;
+    margin-right: 6px !important;
+    border: none !important;
+    font-weight: 700;
+}
+
+.select2-search__field {
+    margin-top: 8px !important;
+    color: #111827 !important;
+}
+
+.select2-dropdown {
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.16) !important;
+    background: rgba(15, 23, 42, 0.95) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.select2-results__option {
+    color: rgba(255,255,255,0.85) !important;
+    padding: 10px 12px !important;
+}
+
+.select2-results__option--highlighted[aria-selected] {
+    background: linear-gradient(135deg, #5b5df6, #8b5cf6) !important;
+    color: #fff !important;
+}
+
+.select2-results__group {
+    color: rgba(255,255,255,0.65) !important;
+    font-weight: 700;
+    padding: 8px 12px !important;
+}
+
+@media (max-width: 768px) {
+    .career-form-card {
+        max-width: 95%;
+        padding: 24px 20px;
+    }
+
+    .career-form-card label {
+        font-size: 0.95rem;
+    }
+
+    .career-form-card button[type="submit"] {
+        padding: 12px;
+        font-size: 16px;
+    }
+}

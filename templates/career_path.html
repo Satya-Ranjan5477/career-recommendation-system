@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Roadmap</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='navbar-footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='career_path.css') }}">
+</head>
+<body class="roadmap-body">
+    {% include 'partials/navbar.html' %}
+
+    <a href="{{ url_for('result') }}" class="back-arrow" title="Back to Result Page">
+     ← 
+    </a>
+
+    <main class="roadmap-shell">
+        <h2 id="title" class="roadmap-title">Career Roadmap</h2>
+
+        <div class="history" id="historyBox"></div>
+
+        <div class="progress">
+            <p>Progress: <span id="percent">0%</span></p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="timeline" id="timeline"></div>
+
+        <div class="extra-section">
+            <div class="box">
+                <h3>🧠 Skills Required</h3>
+                <div class="items" id="skills"></div>
+            </div>
+
+            <div class="box">
+                <h3>💼 Projects to Build</h3>
+                <div class="items" id="projects"></div>
+            </div>
+
+            <div class="box">
+                <h3>📚 Learning Resources</h3>
+                <div class="items" id="resources"></div>
+            </div>
+        </div>
+    </main>
+
+<script id="career-data" type="application/json">
+    {{ {
+        "selected_career": selected_career|default('', true),
+        "career_history": career_history|default([], true)
+    } | tojson }}
+</script>    
+<script>
+    // Career selected from URL or Flask session
+    const urlCareer =
+        new URLSearchParams(window.location.search).get("career") || "";
+
+    const careerData =
+    JSON.parse(
+        document.getElementById("career-data").textContent
+    );
+
+    const selectedCareer =
+        careerData.selected_career || "";
+    
+    const history =
+        careerData.career_history || [];
+
+    // Remove duplicate/empty careers
+    const careers = [...new Set(
+        history.filter(career => career && career.trim() !== "")
+    )];
+
+    // URL career has priority, otherwise Flask selected career
+    const preferredCareer = urlCareer || selectedCareer;
+
+    // If selected career is not already in history, add it
+    if (preferredCareer && !careers.includes(preferredCareer)) {
+        careers.unshift(preferredCareer);
+    }
+
+    let currentCareer = preferredCareer || careers[0] || "";
+
+    const historyBox = document.getElementById("historyBox");
+    const timeline = document.getElementById("timeline");
+    const skillsBox = document.getElementById("skills");
+    const projectsBox = document.getElementById("projects");
+    const resourcesBox = document.getElementById("resources");
+
+    // ----------------------------------------------------
+    // SHOW CAREER HISTORY
+    // ----------------------------------------------------
+
+    historyBox.innerHTML = "";
+
+    careers.forEach(careerName => {
+
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.textContent = careerName;
+
+        if (careerName === currentCareer) {
+            button.classList.add("active");
+        }
+
+        button.addEventListener("click", () => {
+            loadCareer(careerName);
+        });
+
+        historyBox.appendChild(button);
+    });
+
+
+    // ----------------------------------------------------
+    // LOAD CAREER ROADMAP
+    // ----------------------------------------------------
+
+    function loadCareer(career) {
+
+        if (!career) {
+            console.log("No career selected");
+            return;
+        }
+
+        currentCareer = career;
+
+        console.log("Loading career:", career);
+
+        // Update browser URL
+        const nextUrl =
+            `${window.location.pathname}?career=${encodeURIComponent(career)}`;
+
+        window.history.replaceState({}, "", nextUrl);
+
+        // Update title
+        document.getElementById("title").innerText =
+            career + " Roadmap";
+
+        // Highlight selected career
+        document.querySelectorAll("#historyBox button").forEach(button => {
+
+            if (button.textContent === career) {
+                button.classList.add("active");
+            } else {
+                button.classList.remove("active");
+            }
+
+        });
+
+        // Clear old content
+        timeline.innerHTML = `
+            <div class="step-box left">
+                <div class="content">
+                    Loading roadmap...
+                </div>
+            </div>
+        `;
+
+        skillsBox.innerHTML = "";
+        projectsBox.innerHTML = "";
+        resourcesBox.innerHTML = "";
+
+        // ------------------------------------------------
+        // GET ROADMAP FROM FLASK
+        // ------------------------------------------------
+
+        fetch(`/get-path/${encodeURIComponent(career)}`)
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Server returned " + response.status
+                    );
+                }
+
+                return response.json();
+            })
+
+            .then(data => {
+
+                console.log("Career path data:", data);
+
+                const steps = data.steps || [];
+                const skills = data.skills || [];
+                const projects = data.projects || [];
+                const resources = data.resources || [];
+
+                // -------------------------------
+                // ROADMAP STEPS
+                // -------------------------------
+
+                timeline.innerHTML = "";
+
+                if (steps.length === 0) {
+
+                    timeline.innerHTML = `
+                        <div class="step-box left">
+                            <div class="content">
+                                No learning steps available
+                                for ${career}.
+                            </div>
+                        </div>
+                    `;
+
+                } else {
+
+                    steps.forEach((step, index) => {
+
+    const stepBox =
+        document.createElement("div");
+
+    stepBox.className =
+        `step-box ${
+            index % 2 === 0
+                ? "left"
+                : "right"
+        }`;
+
+    const content =
+        document.createElement("div");
+
+    content.className = "content";
+
+    const label =
+        document.createElement("label");
+
+    const checkbox =
+        document.createElement("input");
+
+    checkbox.type = "checkbox";
+
+    checkbox.className =
+        "roadmap-checkbox";
+
+    checkbox.dataset.index =
+        index;
+
+    const stepTitle =
+        document.createElement("b");
+
+    stepTitle.textContent =
+        `Step ${index + 1}: `;
+
+    const stepText =
+        document.createTextNode(
+            String(step)
+        );
+
+    label.appendChild(checkbox);
+    label.appendChild(stepTitle);
+    label.appendChild(stepText);
+
+    content.appendChild(label);
+    stepBox.appendChild(content);
+
+    timeline.appendChild(stepBox);
+});
+                }
+
+
+                // -------------------------------
+                // SKILLS
+                // -------------------------------
+
+                if (skills.length > 0) {
+
+                    skills.forEach(skill => {
+
+                        const item = document.createElement("div");
+
+                        item.className = "item";
+
+                        item.textContent = skill;
+
+                        skillsBox.appendChild(item);
+
+                    });
+
+                } else {
+
+                    skillsBox.innerHTML =
+                        "<p>No skills listed.</p>";
+                }
+
+
+                // -------------------------------
+                // PROJECTS
+                // -------------------------------
+                
+                // if (projects.length > 0) {
+                
+                //     projects.forEach(project => {
+                
+                //         const item = document.createElement("div");
+                
+                //         item.className = "item";
+                
+                //         // If project is a simple string
+                //         if (typeof project === "string") {
+                
+                //             item.textContent = project;
+                
+                //         } 
+                //         // If project is an object
+                //         else {
+                
+                //             item.innerHTML = `
+                //                 <strong>
+                //                     ${project.title || project.name || "Project"}
+                //                 </strong>
+                
+                //                 ${
+                //                     project.description
+                //                         ? `<p>${project.description}</p>`
+                //                         : ""
+                //                 }
+                //             `;
+                //         }
+
+                //         projectsBox.appendChild(item);
+                
+                //     });
+
+                // } else {
+                
+                //     projectsBox.innerHTML =
+                //         "<p>No projects listed.</p>";
+                // }
+                // -------------------------------
+                // PROJECTS
+                // -------------------------------
+
+if (projects.length > 0) {
+
+    projects.forEach(project => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "item";
+
+        // Simple string project
+        if (typeof project === "string") {
+
+            item.textContent = project;
+
+        }
+
+        // Project object
+        else {
+
+            const title =
+                project.title ||
+                project.name ||
+                "Project";
+
+            const description =
+                project.description || "";
+
+            const titleElement =
+                document.createElement("strong");
+
+            titleElement.textContent = title;
+
+            item.appendChild(titleElement);
+
+            if (description) {
+
+                const descriptionElement =
+                    document.createElement("p");
+
+                descriptionElement.textContent =
+                    description;
+
+                item.appendChild(
+                    descriptionElement
+                );
+            }
+        }
+
+        projectsBox.appendChild(item);
+    });
+
+} else {
+
+    projectsBox.innerHTML =
+        "<p>No projects listed.</p>";
+}
+            //     // -------------------------------
+            //    // RESOURCES
+            //    // -------------------------------
+               
+            //     if (resources.length > 0) {
+               
+            //        resources.forEach(resource => {
+               
+            //            // If resource is a simple string
+            //            if (typeof resource === "string") {
+               
+            //                const item = document.createElement("div");
+               
+            //                item.className = "item";
+               
+            //                item.textContent = resource;
+
+            //                 resourcesBox.appendChild(item);
+                
+            //             }
+                
+            //             // If resource is an object
+            //             else {
+                
+            //                 const name =
+            //                     resource.name ||
+            //                     resource.title ||
+            //                     "Learning Resource";
+                
+            //                 const url =
+            //                     resource.url ||
+            //                     resource.link ||
+            //                  "";
+
+            //                 if (url) {
+                
+            //                     // Create actual clickable resource button
+            //                     const item =
+            //                         document.createElement("a");
+                
+            //                     item.className =
+            //                         "resource-card";
+                
+            //                     item.href = url;
+                
+            //                     item.target = "_blank";
+                
+            //                     item.rel =
+            //                         "noopener noreferrer";
+                
+            //                     item.innerHTML = `
+            //                         <span class="resource-icon">🔗</span>
+            //                         <span>${name}</span>
+            //                     `;
+                
+            //                     resourcesBox.appendChild(item);
+                
+            //                 } else {
+                
+            //                     const item =
+            //                         document.createElement("div");
+
+            //                     item.className = "item";
+
+            //                     item.innerHTML = `
+            //                         <span class="resource-icon">🔗</span>
+            //                         <span>${name}</span>
+            //                     `;
+
+            //                     resourcesBox.appendChild(item);
+            //                 }
+            //             }
+                
+            //         });
+                
+            //     } else {
+                
+            //         resourcesBox.innerHTML =
+            //             "<p>No resources listed.</p>";
+            //     }
+                  // -------------------------------
+                  // RESOURCES
+                  // -------------------------------
+
+if (resources.length > 0) {
+
+    resources.forEach(resource => {
+
+        // Simple string resource
+        if (typeof resource === "string") {
+
+            const item =
+                document.createElement("div");
+
+            item.className = "item";
+
+            item.textContent = resource;
+
+            resourcesBox.appendChild(item);
+
+            return;
+        }
+
+        // Resource object
+        const name =
+            resource.name ||
+            resource.title ||
+            "Learning Resource";
+
+        const url =
+            resource.url ||
+            resource.link ||
+            "";
+
+        // If URL exists
+        if (url) {
+
+            const item =
+                document.createElement("a");
+
+            item.className =
+                "resource-card";
+
+            item.target = "_blank";
+
+            item.rel =
+                "noopener noreferrer";
+
+            item.textContent = "";
+
+            // Validate URL
+            try {
+
+                const parsedUrl =
+                    new URL(url);
+
+                if (
+                    parsedUrl.protocol !== "http:" &&
+                    parsedUrl.protocol !== "https:"
+                ) {
+                    throw new Error(
+                        "Invalid protocol"
+                    );
+                }
+
+                item.href = parsedUrl.href;
+
+            } catch (error) {
+
+                console.warn(
+                    "Invalid resource URL:",
+                    url
+                );
+
+                item.href = "#";
+
+                item.addEventListener(
+                    "click",
+                    event => {
+                        event.preventDefault();
+                    }
+                );
+            }
+
+            // Chain icon
+            const icon =
+                document.createElement("span");
+
+            icon.className =
+                "resource-icon";
+
+            icon.textContent = "🔗";
+
+            // Resource name
+            const nameElement =
+                document.createElement("span");
+
+            nameElement.textContent =
+                name;
+
+            item.appendChild(icon);
+
+            item.appendChild(nameElement);
+
+            resourcesBox.appendChild(item);
+
+        } else {
+
+            // Resource without URL
+            const item =
+                document.createElement("div");
+
+            item.className = "item";
+
+            const icon =
+                document.createElement("span");
+
+            icon.className =
+                "resource-icon";
+
+            icon.textContent = "🔗";
+
+            const nameElement =
+                document.createElement("span");
+
+            nameElement.textContent =
+                name;
+
+            item.appendChild(icon);
+
+            item.appendChild(nameElement);
+
+            resourcesBox.appendChild(item);
+        }
+
+    });
+
+} else {
+
+    resourcesBox.innerHTML =
+        "<p>No resources listed.</p>";
+}
+                // ------------------------------------
+                // LOAD SAVED PROGRESS FROM MONGODB
+                // ------------------------------------
+
+                loadProgress(career, steps.length);
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Error loading career path:",
+                    error
+                );
+
+                timeline.innerHTML = `
+                    <div class="step-box left">
+                        <div class="content">
+                            Unable to load career roadmap.
+                            Please try again.
+                        </div>
+                    </div>
+                `;
+            });
+    }
+
+
+    // ----------------------------------------------------
+    // LOAD PROGRESS FROM MONGODB
+    // ----------------------------------------------------
+
+    function loadProgress(career, totalSteps) {
+
+        fetch(`/get-career-progress/${encodeURIComponent(career)}`)
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Progress request failed: " +
+                        response.status
+                    );
+                }
+
+                return response.json();
+            })
+
+            .then(data => {
+
+                const completedSteps =
+                    data.completed_steps || [];
+
+                console.log(
+                    "Saved progress:",
+                    completedSteps
+                );
+
+                document
+                    .querySelectorAll(".roadmap-checkbox")
+                    .forEach(checkbox => {
+
+                        const index =
+                            Number(checkbox.dataset.index);
+
+                        checkbox.checked =
+                            completedSteps.includes(index);
+                    });
+
+                updateProgressUI(
+                    totalSteps,
+                    completedSteps
+                );
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Error loading progress:",
+                    error
+                );
+
+                updateProgressUI(
+                    totalSteps,
+                    []
+                );
+            });
+    }
+
+
+    // ----------------------------------------------------
+    // CHECKBOX CHANGE
+    // ----------------------------------------------------
+
+    document.addEventListener(
+        "change",
+        function(event) {
+
+            if (
+                !event.target.classList.contains(
+                    "roadmap-checkbox"
+                )
+            ) {
+                return;
+            }
+
+            saveProgress();
+        }
+    );
+
+
+    // ----------------------------------------------------
+    // SAVE PROGRESS TO MONGODB
+    // ----------------------------------------------------
+
+    function saveProgress() {
+
+        if (!currentCareer) {
+            return;
+        }
+
+        const completedSteps = [];
+
+        document
+            .querySelectorAll(".roadmap-checkbox")
+            .forEach(checkbox => {
+
+                if (checkbox.checked) {
+
+                    completedSteps.push(
+                        Number(checkbox.dataset.index)
+                    );
+
+                }
+
+            });
+
+        console.log(
+            "Saving progress:",
+            currentCareer,
+            completedSteps
+        );
+
+        fetch(
+            `/save-career-progress/${encodeURIComponent(currentCareer)}`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    completed_steps: completedSteps
+                })
+            }
+        )
+
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error(
+                    "Save failed: " + response.status
+                );
+            }
+
+            return response.json();
+
+        })
+
+        .then(data => {
+
+            console.log(
+                "Progress saved:",
+                data
+            );
+
+            updateProgressUI(
+                document.querySelectorAll(
+                    ".roadmap-checkbox"
+                ).length,
+                completedSteps
+            );
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                "Error saving progress:",
+                error
+            );
+
+        });
+    }
+
+
+    // ----------------------------------------------------
+    // UPDATE PROGRESS BAR
+    // ----------------------------------------------------
+
+    function updateProgressUI(
+        totalSteps,
+        completedSteps
+    ) {
+
+        const percentElement =
+            document.getElementById("percent");
+
+        const progressFill =
+            document.getElementById("progressFill");
+
+        if (totalSteps === 0) {
+
+            percentElement.innerText = "0%";
+
+            progressFill.style.width = "0%";
+
+            return;
+        }
+
+        const percentage =
+            Math.round(
+                (completedSteps.length / totalSteps) * 100
+            );
+
+        percentElement.innerText =
+            percentage + "%";
+
+        progressFill.style.width =
+            percentage + "%";
+    }
+
+
+    // ----------------------------------------------------
+    // INITIAL LOAD
+    // ----------------------------------------------------
+
+    if (currentCareer) {
+
+        loadCareer(currentCareer);
+
+    } else {
+
+        timeline.innerHTML = `
+            <div class="step-box left">
+                <div class="content">
+                    No career selected.
+                </div>
+            </div>
+        `;
+    }
+
+</script>
+
+{% include 'partials/footer.html' %}
+
+</body>
+</html>
+

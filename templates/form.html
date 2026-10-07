@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='navbar-footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='form.css') }}">
+</head>
+<body class="auth-body career-form-body">
+    {% include 'partials/navbar.html' %}
+
+    <main class="page-shell narrow career-form-shell">
+        <section class="career-form-card">
+            <span class="page-kicker">Career recommendation</span>
+            <h2 class="page-title" style="font-size:2rem;margin-top:12px;">Explore Your Career</h2>
+            <p class="form-note">Choose your qualification, interests, and skills to get a recommendation tailored to you.</p>
+
+            <form method="POST" action="{{ url_for('predict') }}">
+                <label>Qualification</label>
+                <select name="qualification">
+                    <option>BTech</option>
+                    <option>MCA</option>
+                    <option>Diploma</option>
+                    <option>BCA</option>
+                    <option>BSc CS</option>
+                    <option>BSc IT</option>
+                    <option>MSc Data Science</option>
+                    <option>MTech</option>
+                    <option>MBA</option>
+                    <option>Self-taught</option>
+                    <option>Bootcamp</option>
+                </select>
+
+                <label>Interests</label>
+                <select name="interests[]" class="multi-select" multiple>
+                    <option>coding</option>
+                    <option>web</option>
+                    <option>ai</option>
+                    <option>data analysis</option>
+                    <option>cloud</option>
+                    <option>security</option>
+                    <option>design</option>
+                    <option>app development</option>
+                    <option>gaming</option>
+                    <option>devops</option>
+                    <option>blockchain</option>
+                    <option>data</option>
+                    <option>visualization</option>
+                    <option>ml</option>
+                    <option>networking</option>
+                    <option>ui</option>
+                    <option>ux</option> 
+                    <option>mobile</option>
+                </select>
+
+                <label>Skills</label>
+                <select name="skills[]" class="multi-select" multiple>
+                    <optgroup label="Programming">
+                        <option>python</option>
+                        <option>java</option>
+                        <option>c++</option>
+                        <option>c#</option>
+                        <option>c</option>
+                    </optgroup>
+
+                    <optgroup label="Web Development">
+                        <option>html</option>
+                        <option>css</option>
+                        <option>javascript</option>
+                        <option>bootstrap</option>
+                        <option>react</option>
+                        <option>nodejs</option>
+                        <option>express</option>
+                        <option>mongodb</option>
+                        <option>mysql</option>
+                        <option>firebase</option>
+                        <option>django</option>
+
+                    </optgroup>
+
+                    <optgroup label="AI / Data">
+                        <option>sql</option>
+                        <option>pandas</option>
+                        <option>ml</option>
+                        <option>tensorflow</option>
+                        <option>keras</option>
+                        <option>deep learning</option>
+                        <option>nlp</option>
+                        <option>opencv</option>
+                        <option>tableau</option>
+                        <option>power bi</option>
+                        <option>excel</option>
+                    </optgroup>
+
+                    <optgroup label="Cloud / DevOps">
+                        <option>aws</option>
+                        <option>azure</option>
+                        <option>gcp</option>
+                        <option>docker</option>
+                        <option>kubernetes</option>
+                        <option>jenkins</option>
+                        <option>ci cd</option>
+                        <option>terraform</option>
+                    </optgroup>
+
+                    <optgroup label="Design">
+                        <option>figma</option>
+                        <option>adobe xd</option>
+                        <option>photoshop</option>
+                        <option>illustrator</option>
+                        <option>prototyping</option>
+                        <option>wireframing</option>
+                    </optgroup>
+
+                    <optgroup label="Mobile Development">
+                        <option>flutter</option>
+                        <option>android sdk</option>
+                        <option>react native</option>
+                        <option>kotlin</option>
+                        <option>swift</option>
+                    </optgroup>
+
+                    <optgroup label="Cybersecurity">
+                        <option>ethical hacking</option>
+                        <option>network security</option>
+                        <option>malware analysis</option>
+                        <option>penetration testing</option>
+                        <option>wireshark</option>
+                        <option>forensics</option>
+                    </optgroup>
+
+                    <optgroup label="Game / AR-VR">
+                        <option>unity</option>
+                        <option>game design</option>
+                        <option>3d modeling</option>
+                        <option>graphics</option>
+                        <option>physics</option>
+                        <option>unreal engine</option>
+                    </optgroup>
+
+                    <optgroup label="Networking / Systems">
+                        <option>linux</option>
+                        <option>networking</option>
+                        <option>tcp/ip</option>
+                        <option>shell scripting</option>
+                        <option>hardware</option>
+                    </optgroup>
+
+                    <optgroup label="Blockchain">
+                        <option>solidity</option>
+                        <option>web3</option>
+                        <option>smart contracts</option>
+                        <option>ethereum</option>
+                        <option>crypto</option>
+                    </optgroup>
+                </select>
+                <label>Select Traits:</label>
+                   <select name="traits[]" class="multi-select" multiple>
+                        <option>analytical</option>
+                        <option>problem solving</option>
+                        <option>logical thinking</option>
+                        <option>creativity</option>
+                        <option>curiosity</option>
+                        <option>attention to detail</option>
+                        <option>critical thinking</option>
+                        <option>adaptability</option>
+                        <option>empathy</option>
+                        <option>innovation</option>
+                        <option>communication</option>
+                        <option>teamwork</option>
+                        <option>leadership</option>
+                        <option>patience</option>
+                        <option>focus</option>
+                    </select>
+
+
+                <button type="submit">Get Career Recommendation</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        document.querySelector("form").addEventListener("submit", function() {
+            localStorage.removeItem("quizScore");
+            localStorage.removeItem("totalQuestions");
+            localStorage.removeItem("quizAnalysis");
+        });
+
+        $(document).ready(function() {
+            $('.multi-select').select2({
+                placeholder: "Select options",
+                allowClear: true,
+                width: '100%',
+                closeOnSelect: false
+            });
+        });
+    </script>
+
+{% include 'partials/footer.html' %}
+
+</body>
+</html>
+</html>

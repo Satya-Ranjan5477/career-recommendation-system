@@ -1,0 +1,121 @@
+qualification,interests,skills,traits,career
+
+BTech,"coding,ai","python,sql,statistics","analytical,problem solving",Data Scientist
+MCA,"ai,math","python,r,statistics","analytical,logical thinking",Data Scientist
+BTech,"data analysis,ai","python,pandas,ml","analytical,curiosity",Data Scientist
+MCA,"ai,deep learning","python,tensorflow,keras","analytical,innovation",Data Scientist
+Diploma,"data,analysis","excel,sql,python","attention to detail,analytical",Data Scientist
+
+BTech,"coding,web","html,css,javascript","creativity,logical thinking",Web Developer
+Diploma,"web,design","html,css,bootstrap","creativity,design thinking",Web Developer
+BTech,"frontend,coding","react,javascript,css","creativity,problem solving",Web Developer
+MCA,"backend,coding","nodejs,express,mongodb","logical thinking,problem solving",Web Developer
+BTech,"fullstack,coding","react,nodejs,sql","problem solving,adaptability",Web Developer
+
+BTech,"ai,ml","python,tensorflow,deep learning","analytical,innovation",AI Engineer
+MCA,"ai,ml","python,pytorch,neural networks","analytical,logical thinking",AI Engineer
+BTech,"ai,research","python,opencv,nlp","curiosity,analytical",AI Engineer
+Diploma,"ai,automation","python,ml algorithms,data","problem solving,innovation",AI Engineer
+MCA,"ai,robotics","python,robotics,vision","curiosity,analytical",AI Engineer
+
+BTech,"security,networking","ethical hacking,network security,linux","attention to detail,critical thinking",Cybersecurity Analyst
+Diploma,"security","network security,firewall,linux","attention to detail,logical thinking",Cybersecurity Analyst
+MCA,"security,analysis","malware analysis,forensics,python","critical thinking,analytical",Cybersecurity Analyst
+BTech,"cyber,defense","penetration testing,security tools,linux","problem solving,critical thinking",Cybersecurity Analyst
+BTech,"networking,security","wireshark,firewall,protocols","attention to detail,analytical",Cybersecurity Analyst
+
+BTech,"cloud,devops","aws,docker,kubernetes","system thinking,adaptability",Cloud Engineer
+MCA,"cloud","azure,virtualization,linux","logical thinking,adaptability",Cloud Engineer
+Diploma,"cloud","gcp,cloud storage,networking","system thinking,problem solving",Cloud Engineer
+BTech,"cloud,security","aws,cloud security,monitoring","analytical,attention to detail",Cloud Engineer
+MCA,"devops,cloud","docker,ci cd,jenkins","problem solving,efficiency",Cloud Engineer
+
+BTech,"design,ui","figma,adobe xd,prototyping","creativity,empathy",UI/UX Designer
+Diploma,"design","photoshop,illustrator,figma","creativity,design thinking",UI/UX Designer
+MCA,"ux,research","user research,wireframing,testing","empathy,analytical",UI/UX Designer
+BTech,"ui,design","figma,layout,typography","creativity,attention to detail",UI/UX Designer
+BTech,"ux,design","user journey,prototyping,testing","empathy,creativity",UI/UX Designer
+
+BTech,"mobile,apps","java,android sdk,ui","problem solving,logical thinking",Mobile App Developer
+MCA,"app development","flutter,dart,api","problem solving,adaptability",Mobile App Developer
+Diploma,"mobile","kotlin,android studio,debugging","attention to detail,problem solving",Mobile App Developer
+BTech,"cross platform","react native,javascript,api","adaptability,problem solving",Mobile App Developer
+MCA,"ios,apps","swift,xcode,ui","creativity,attention to detail",Mobile App Developer
+
+BTech,"gaming,design","unity,c#,game design","creativity,passion",Game Developer
+Diploma,"gaming","unity,2d games,assets","creativity,interest in gaming",Game Developer
+MCA,"3d,gaming","unreal engine,3d modeling,rendering","creativity,visual thinking",Game Developer
+BTech,"game dev","c++,graphics,physics","problem solving,logical thinking",Game Developer
+BTech,"gaming,ai","unity,ai in games,physics","innovation,creativity",Game Developer
+
+BTech,"devops,automation","docker,jenkins,ci cd","efficiency,system thinking",DevOps Engineer
+MCA,"devops","kubernetes,terraform,aws","system thinking,problem solving",DevOps Engineer
+Diploma,"automation","shell scripting,linux,git","problem solving,logical thinking",DevOps Engineer
+BTech,"deployment,cloud","ci cd,monitoring,logging","analytical,efficiency",DevOps Engineer
+MCA,"infra,devops","terraform,aws,docker","system thinking,adaptability",DevOps Engineer
+
+BTech,"blockchain,crypto","solidity,web3,smart contracts","innovation,security thinking",Blockchain Developer
+MCA,"blockchain","ethereum,crypto,web3","analytical,innovation",Blockchain Developer
+Diploma,"crypto","blockchain basics,bitcoin,security","curiosity,analytical",Blockchain Developer
+BTech,"defi,crypto","smart contracts,solidity,defi","innovation,problem solving",Blockchain Developer
+MCA,"web3,blockchain","web3,dapps,ethereum","analytical,curiosity",Blockchain Developer
+
+BTech,"data,analysis","excel,sql,tableau","analytical,attention to detail",Data Analyst
+BCA,"data,visualization","power bi,sql,excel","analytical,curiosity",Data Analyst
+MCA,"data,reporting","python,pandas,sql","logical thinking,analytical",Data Analyst
+Diploma,"data","excel,charts,sql","attention to detail,focus",Data Analyst
+BSc CS,"business,data","tableau,sql,statistics","analytical,communication",Data Analyst
+
+BTech,"ml,ai","python,scikit-learn,ml","analytical,problem solving",Machine Learning Engineer
+MCA,"ai,ml","python,tensorflow,pytorch","analytical,innovation",Machine Learning Engineer
+BSc CS,"ml,data","python,ml algorithms,data","curiosity,analytical",Machine Learning Engineer
+MTech,"deep learning","cnn,rnn,pytorch","research mindset,analytical",Machine Learning Engineer
+Self-taught,"ml projects","python,ml,data","self learning,focus",Machine Learning Engineer
+
+BTech,"coding,software","java,python,dsa","problem solving,logical thinking",Software Engineer
+BCA,"software,development","c++,java,oop","logical thinking,adaptability",Software Engineer
+MCA,"system design","java,spring,sql","analytical,problem solving",Software Engineer
+Diploma,"coding","c,cpp,debugging","problem solving,focus",Software Engineer
+BSc IT,"software","python,api,sql","adaptability,learning mindset",Software Engineer
+
+BTech,"systems,network","linux,server,networking","problem solving,attention to detail",System Administrator
+Diploma,"system","linux,hardware,networking","logical thinking,focus",System Administrator
+BCA,"infra,systems","windows server,networking,security","analytical,problem solving",System Administrator
+MCA,"system admin","linux,shell scripting,server","attention to detail,logical thinking",System Administrator
+BSc IT,"system support","networking,hardware,os","problem solving,adaptability",System Administrator
+
+BTech,"testing,qa","selenium,manual testing,java","attention to detail,analytical",Software Tester
+BCA,"qa,testing","test cases,bug tracking,automation","logical thinking,focus",Software Tester
+MCA,"automation testing","selenium,python,testing","analytical,problem solving",Software Tester
+Diploma,"testing","manual testing,qa tools","attention to detail,patience",Software Tester
+BSc IT,"qa","testing,debugging,reporting","analytical,communication",Software Tester
+
+BTech,"ar,vr","unity,3d,vr","creativity,innovation",AR/VR Developer
+BCA,"vr,design","unity,blender,3d","creativity,visual thinking",AR/VR Developer
+MCA,"ar apps","unity,c#,3d modeling","problem solving,creativity",AR/VR Developer
+Diploma,"vr","3d design,unity,assets","creativity,interest in vr",AR/VR Developer
+BSc CS,"ar projects","unity,vr sdk,3d","innovation,curiosity",AR/VR Developer
+
+BTech,"embedded,iot","c,embedded systems,arduino","problem solving,logical thinking",Embedded Engineer
+Diploma,"iot","arduino,sensors,c","attention to detail,curiosity",Embedded Engineer
+MCA,"embedded","c,rtos,hardware","analytical,problem solving",Embedded Engineer
+BSc CS,"iot projects","raspberry pi,python,hardware","curiosity,innovation",Embedded Engineer
+BTech,"electronics,iot","embedded c,hardware,debugging","focus,problem solving",Embedded Engineer
+
+BTech,"networking","ccna,networking,protocols","logical thinking,problem solving",Network Engineer
+Diploma,"network","router,switch,networking","attention to detail,focus",Network Engineer
+BCA,"network infra","tcp/ip,network security","analytical,problem solving",Network Engineer
+MCA,"network systems","linux,networking,protocols","logical thinking,analytical",Network Engineer
+BSc IT,"network support","network tools,hardware","adaptability,problem solving",Network Engineer
+
+BTech,"support,tech","troubleshooting,networking,os","problem solving,communication",Technical Support Engineer
+Diploma,"support","hardware,os,networking","patience,problem solving",Technical Support Engineer
+BCA,"it support","windows,networking,helpdesk","communication,adaptability",Technical Support Engineer
+MCA,"technical support","linux,server,debugging","analytical,communication",Technical Support Engineer
+BSc IT,"support","os,networking,tools","problem solving,focus",Technical Support Engineer
+
+BTech,"product,management","agile,scrum,communication","leadership,communication",Product Manager
+MCA,"product,tech","roadmap,planning,analysis","analytical,leadership",Product Manager
+BSc CS,"product","user stories,planning,tools","communication,problem solving",Product Manager
+MBA,"tech,product","management,agile,analytics","leadership,decision making",Product Manager
+Self-taught,"product","research,planning,tools","curiosity,leadership",Product Manager

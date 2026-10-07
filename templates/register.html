@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - Career Mitra</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='navbar-footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='register.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="auth-body">
+
+{% include 'partials/navbar.html' %}
+
+<main class="page-shell narrow">
+<div class="form-container glass-panel">
+    <span class="page-kicker">Create account</span>
+    <h2 class="page-title" style="font-size:2rem;margin-top:12px;">Register</h2>
+    <p id="registerMessage" class="form-message" style="display:none;"></p>
+
+    <form id="registerForm">
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p>Already registered? <a href="{{ url_for('login') }}">Login here</a></p>
+</div>
+</main>
+
+<!-- <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } 
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+const firebaseConfig = {
+ apiKey: "{{ firebase_config.apiKey }}",
+ authDomain: "{{ firebase_config.authDomain }}",
+ projectId: "{{ firebase_config.projectId }}",
+ storageBucket: "{{ firebase_config.storageBucket }}",
+ messagingSenderId: "{{ firebase_config.messagingSenderId }}",
+ appId: "{{ firebase_config.appId }}"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+function createUserId(name) {
+    const prefix = (name || "User")
+        .replace(/[^a-zA-Z]/g, "")
+        .toUpperCase()
+        .padEnd(3, "X")
+        .slice(0, 3);
+    const number = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
+    return `${prefix}${number}`;
+}
+
+function showMessage(message, type) {
+    const element = document.getElementById("registerMessage");
+
+    if (element) {
+        element.style.display = "block";
+        element.textContent = message;
+        element.classList.remove("success", "error");
+        element.classList.add(type);
+    }
+}
+
+
+document.getElementById("registerForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    
+    if (!name || !email || !password) {
+        showMessage("Please fill in all fields.", "error");
+        return;
+    }
+    
+    const userId = createUserId(name);
+    try{
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Step 2: Save student name and ID in Firebase profile
+        await updateProfile(user, {
+            displayName: `${userId}|${name}`
+        });
+
+        // Step 3: Get Firebase ID token
+        const idToken = await user.getIdToken();
+
+        // Step 4: Send student details to Flask
+        const response = await fetch("/save-student", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${idToken}`
+            },
+            body: JSON.stringify({
+                firebase_uid: user.uid,
+                user_id: userId,
+                name: name,
+                email: user.email
+            })
+        });
+
+        const result = await response.json();
+
+        // Step 5: Check MongoDB save result
+        if (!response.ok) {
+            throw new Error(
+                result.message || "Could not save student information."
+            );
+        }
+
+        showMessage(
+            `Registration successful! Your Student ID is ${userId}.`,
+            "success"
+        );
+
+        // Step 6: Redirect to login
+        setTimeout(() => {
+            window.location.href = "/login";
+        }, 1800);
+
+    } catch (error) {
+
+        console.error("Registration error:", error);
+
+        showMessage(error.message, "error");
+    }
+
+});
+    
+   
+</script> -->
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+
+import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    updateProfile
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "{{ firebase_config.apiKey }}",
+    authDomain: "{{ firebase_config.authDomain }}",
+    projectId: "{{ firebase_config.projectId }}",
+    storageBucket: "{{ firebase_config.storageBucket }}",
+    messagingSenderId: "{{ firebase_config.messagingSenderId }}",
+    appId: "{{ firebase_config.appId }}"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+
+// Generate student ID
+function createUserId(name) {
+    const prefix = (name || "User")
+        .replace(/[^a-zA-Z]/g, "")
+        .toUpperCase()
+        .padEnd(3, "X")
+        .slice(0, 3);
+
+    const number = String(
+        Math.floor(Math.random() * 999) + 1
+    ).padStart(3, "0");
+
+    return `${prefix}${number}`;
+}
+
+
+// Display messages
+function showMessage(message, type) {
+    const element = document.getElementById("registerMessage");
+
+    element.style.display = "block";
+    element.textContent = message;
+    element.classList.remove("success", "error");
+    element.classList.add(type);
+}
+
+
+// Registration
+document.getElementById("registerForm").addEventListener(
+    "submit",
+    async function (e) {
+
+        e.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!name || !email || !password) {
+            showMessage("Please fill in all fields.", "error");
+            return;
+        }
+
+        const button = document.querySelector(
+            '#registerForm button[type="submit"]'
+        );
+
+        button.disabled = true;
+        button.textContent = "Registering...";
+
+        let user = null;
+
+        try {
+            // 1. Create Firebase account
+            console.log("Step 1: Creating Firebase account");
+
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+            user = userCredential.user;
+
+            console.log("Step 1 successful: Firebase account created");
+
+            // 2. Save name and student ID in Firebase profile
+            const userId = createUserId(name);
+
+            await updateProfile(user, {
+                displayName: `${userId}|${name}`
+            });
+
+            console.log("Step 2 successful: Firebase profile updated");
+
+            // 3. Get Firebase authentication token
+            const idToken = await user.getIdToken();
+
+            // 4. Save student information in Flask/MongoDB
+            console.log("Step 3: Sending student information to Flask");
+
+            const response = await fetch("/save-student", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${idToken}`
+                },
+                body: JSON.stringify({
+                    firebase_uid: user.uid,
+                    user_id: userId,
+                    name: name,
+                    email: user.email
+                })
+            });
+
+            const result = await response.json();
+
+            console.log("Flask response:", response.status, result);
+
+            if (!response.ok) {
+                throw new Error(
+                    result.message || "Failed to save student in MongoDB"
+                );
+            }
+
+            // 5. Show success message
+            showMessage(
+                `Registration successful! Your Student ID is ${userId}.`,
+                "success"
+            );
+
+            console.log("Registration completed successfully");
+
+            // 6. Redirect after success
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 2500);
+
+        } catch (error) {
+            console.error("Registration error:", error);
+
+            if (error.code === "auth/email-already-in-use") {
+                showMessage(
+                    "This email is already registered. Please log in instead.",
+                    "error"
+                );
+            } else if (user) {
+                showMessage(
+                    "Your Firebase account was created, but saving your student profile failed. Check the browser console.",
+                    "error"
+                );
+            } else {
+                showMessage(error.message, "error");
+            }
+
+        } finally {
+            button.disabled = false;
+            button.textContent = "Register";
+        }
+    }
+);
+</script>
+
+
+{% include 'partials/footer.html' %}
+
+</body>
+</html>

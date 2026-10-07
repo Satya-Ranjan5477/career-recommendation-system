@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Career Mitra</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='navbar-footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='login.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">   
+</head>
+<body class="auth-body">
+
+{% include 'partials/navbar.html' %}
+
+<main class="page-shell narrow">
+<div class="form-container glass-panel">
+    <span class="page-kicker">Secure access</span>
+    <h2 class="page-title" style="font-size:2rem;margin-top:12px;">Login</h2>
+    <p id="loginMessage" class="form-message" style="display:none;"></p>
+
+    <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <p><a href="#" id="forgotPassword">Forgot Password?</a></p>
+
+    <p>New user? <a href="{{ url_for('register') }}">Register here</a></p>
+</div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile } 
+from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+const firebaseConfig = {
+ apiKey: "{{ firebase_config.apiKey }}",
+ authDomain: "{{ firebase_config.authDomain }}",
+ projectId: "{{ firebase_config.projectId }}",
+ storageBucket: "{{ firebase_config.storageBucket }}",
+ messagingSenderId: "{{ firebase_config.messagingSenderId }}",
+ appId: "{{ firebase_config.appId }}"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+function createUserId(name) {
+    const prefix = (name || "User")
+        .replace(/[^a-zA-Z]/g, "")
+        .toUpperCase()
+        .padEnd(3, "X")
+        .slice(0, 3);
+    const number = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
+    return `${prefix}${number}`;
+}
+
+function parseUserIdentity(user) {
+    const displayName = user.displayName || "";
+    const [storedUserId, ...nameParts] = displayName.split("|");
+
+    if (/^[A-Z]{3}\d{3}$/.test(storedUserId)) {
+        return {
+            userId: storedUserId,
+            userName: nameParts.join("|") || "User",
+            needsProfileUpdate: false
+        };
+    }
+
+    const fallbackName = displayName || user.email || "User";
+    return {
+        userId: createUserId(fallbackName),
+        userName: fallbackName,
+        needsProfileUpdate: true
+    };
+}
+
+
+// LOGIN
+// document.getElementById("loginForm").addEventListener("submit", function(e) {
+//     e.preventDefault();
+
+//     const email = document.getElementById("loginEmail").value;
+//     const password = document.getElementById("loginPassword").value;
+
+//     signInWithEmailAndPassword(auth, email, password)
+//     .then(async (userCredential) => {
+
+//         const user = userCredential.user;
+//         const identity = parseUserIdentity(user);
+
+//         if (identity.needsProfileUpdate) {
+//             await updateProfile(user, {
+//                 displayName: `${identity.userId}|${identity.userName}`
+//             });
+//         }
+
+//         localStorage.setItem("userId", identity.userId);
+
+    
+//        const response = await fetch("/set-user", {
+//            method: "POST",
+//            headers: {
+//                "Content-Type": "application/json"
+//            },
+//            credentials: "include",
+//            body: JSON.stringify({
+//                firebase_uid: user.uid,
+//                user_id: identity.userId,
+//                name: identity.userName,
+//                email: user.email
+//            })
+//         });
+
+//         if (!response.ok) {
+//             const errorData = await response.json();
+//             throw new Error(errorData.error || "Unable to save user information");
+//         }
+        
+//         window.location.href = "/dashboard";
+
+
+//         if (!response.ok) {
+//             throw new Error("Unable to set session");
+//         }
+
+//         window.location.href = "/dashboard";
+//     })
+//     .catch((error) => {
+//         const loginMessage = document.getElementById("loginMessage");
+//         if (loginMessage) {
+//             loginMessage.style.display = "block";
+//             loginMessage.textContent = error.message || "Wrong Email or Password ❌";
+//             loginMessage.classList.add("error");
+//         }
+//     });
+// });
+// LOGIN
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    const loginMessage = document.getElementById("loginMessage");
+    const loginButton = document.querySelector("#loginForm button");
+
+    loginButton.disabled = true;
+    loginMessage.style.display = "none";
+
+    try {
+        // 1. Login using Firebase
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+        const user = userCredential.user;
+
+        // 2. Get Firebase ID token
+        const idToken = await user.getIdToken();
+
+        // 3. Send token to Flask
+        const identityParts = (user.displayName || "").split("|");
+
+        const userId = identityParts[0] || "";
+        const name = identityParts.slice(1).join("|") || "";
+        
+        const response = await fetch("/set-user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${idToken}`
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                firebase_uid: user.uid,
+                user_id: userId,
+                name: name,
+                email: user.email
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || "Unable to load your student profile."
+            );
+        }
+
+        // 4. Save existing Student ID
+        if (result.user_id) {
+            localStorage.setItem("userId", result.user_id);
+        }
+
+        // 5. Open dashboard
+        window.location.href = "/dashboard";
+
+    } catch (error) {
+        console.error("Login error:", error);
+
+        loginMessage.style.display = "block";
+        loginMessage.textContent =
+            error.message || "Login failed. Please try again.";
+
+        loginMessage.classList.remove("success");
+        loginMessage.classList.add("error");
+
+    } finally {
+        loginButton.disabled = false;
+    }
+});
+
+// FORGOT PASSWORD
+document.getElementById("forgotPassword").addEventListener("click", function() {
+
+    const email = document.getElementById("loginEmail").value;
+
+    if (!email) {
+        alert("Please enter your email first 📧");
+        return;
+    }
+
+    sendPasswordResetEmail(auth, email)
+    .then(() => {
+        alert("Password reset link sent to your email ✅");
+    })
+    .catch((error) => {
+        alert(error.message);
+    });
+
+});
+</script>
+
+{% include 'partials/footer.html' %}
+
+</body>
+</html>
