@@ -14,7 +14,7 @@ The platform combines **Machine Learning-based career prediction, skill-gap anal
 https://carrier-recommendation-system-project.onrender.com
 
 **GitHub Repository:**  
-https://github.com/Satya-Ranjan5477/carrier-recommendation-system-project
+https://github.com/Satya-Ranjan5477/career-recommendation-system
 
 ---
 
