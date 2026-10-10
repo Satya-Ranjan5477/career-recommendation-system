@@ -18,6 +18,14 @@ https://github.com/Satya-Ranjan5477/career-recommendation-system
 
 ---
 
+## Team Members
+ 
+* Satya Ranjan Dwibedy
+* Tejaswini Bhuyan
+* Priyabrat pradhan
+* Smruti Sourav Sahoo
+* Satyabrat Parida
+
 # 📌 Problem Statement
 
 Choosing the right technology career can be difficult for students because different careers require different combinations of technical skills, interests, and personal characteristics.
@@ -368,8 +376,8 @@ carrier-recommendation-system-project/
 ## 1.Clone repository:
 
 ```bash
-git clone https://github.com/Satya-Ranjan5477/carrier-recommendation-system-project.git
-cd carrier-recommendation-system-project
+git clone https://github.com/Satya-Ranjan5477/career-recommendation-system.git
+cd career-recommendation-system
 ```
 
 ## 2.Create a Virtual Enviornment:
